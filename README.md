@@ -58,3 +58,4 @@
 ## Web:
 - [Dogdays](web/patriot24/dogdays)
     - LFI bypass
+    - Hash length extension
