@@ -52,6 +52,9 @@
     - Format strings
 - [softshell](pwn/patriot23/softshell/)
     - Heap
+- [ringbus](pwn/rstcon25/ringbus/)
+    - SLAB
+    - Kernel
 
 * * *
 
