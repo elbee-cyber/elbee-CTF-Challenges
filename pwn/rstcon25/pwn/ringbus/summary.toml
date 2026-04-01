@@ -1,0 +1,100 @@
+version = 1.0
+
+
+# Challenge title, category, difficulty, and author
+title = "ringbus"
+category = "binex" # webex, binex, foren, reven, crypto, recon, misc
+difficulty = 15   # 1-20 / 1 -> super easy, 20 -> insanely hard (prob not insanely hard, but def above average comparatively)
+author = "elbee"
+
+
+# Brief synopsis of the challenge topic and solution.
+synopsis = '''
+This is a pwn challenge focusing on kernel slab exploitation, simulating a module that handles multiple UART peripherals. 
+The solution involves using a RST ioctl to read from a stream after it has been freed to achieve leaks in different segments 
+and then use a type confusion on a copy_from_user length to overflow a kernel slab.
+
+!!!Important!!!: chal/build_challenge.sh must be run as a first step. (5g)
+As this is a kernel challenge some files are to large to be uploaded. This script will download and configure the appropriate
+bzImage, prepare it for deployment, and create dist.tar for distribution. Therefore the build script should be run before deployment and to generate the distributable.
+Optionally, writeup/build_env.sh can be run to build a local solving/debugging environment.
+'''
+
+
+# Add the solution to the `writeups` folder
+
+
+##### CHALLENGE DESCRIPTION/STATEMENT #######
+# Description is Markdown + Jinja
+# If it requires files or hosted containers, use markdown syntax to add links
+# The values can be and can be templated with "names" from [[deploy]] sections.
+
+
+description = '''
+We got access to a central server in an assembly line that's using a kernel module to manage many asynchronous serial communications at once.
+We really need to escalate privileges on this machine, could you please have a look?
+
+[Challenge files]({{ get_url("static_files") }}/dist.tar).
+Challenge: `nc {{ get_domain("ringbus") }} {{ get_port("ringbus") }}`
+'''
+#############################################
+
+
+##### HINTS #################################
+# Add one or more hints. Generally keep the first hint free.
+
+[[hint]]
+hint = "Placeholder"
+
+#############################################
+
+
+##### DEPLOYMENT ############################
+# Types:
+#  static       The files in `folder` are hosted on https://metaproblems.com/SOMEHASH and served statically.
+#  docker_http  The Dockerfile in `docker_build` is built and a single instance is deployed.
+#  k8s_http     For single instance per-team HTTP containers. The UI is automatically appended to description.
+#  selfhosted   This is just a marker that this challenge requires some sort of special hosting.
+
+[[deploy]]
+type = "static"
+name = "static_files"
+folder = "./dist"
+
+[[deploy]]
+type = "docker_http"
+name = "ringbus"
+container_port = 8888
+docker_build = "./chal/deploy"
+priviliged = false              # optional
+
+#############################################
+
+
+##### GRADER ################################
+# Include one or more `checks`
+# The grader will go through them one by one until it finds a match
+# If a match is found, the flag will be graded as correct if `correct` is true
+# `correct = false` is useful if you want to give a hint in a custom response if they're almost there
+
+[grader]
+
+# Flag as it appears when found. Only for displaying in the UI
+original_flag = "rstcon{r1ngspr4y_1s_n0t0k}"
+
+# Optional default responses
+default_correct_response = "Nice job!"
+default_incorrect_reponse = "Keep trying!"
+
+[[grader.checks]]
+flag = "r1ngspr4y_1s_n0t0k" # The only required field. Do not include the `MetaCTF` tag
+
+##### TAGS ##################################
+# List of tags that mention technologies, languages, tools, etc used to run the challenge or solve it
+# If it reveals something major about the solution, keep it in `private`
+# Can also include CVEs or framework references like OWASP TOP 10, MITRE ATT&CK, CWE, NIST NICE
+
+[tags]
+public = ["kernel","slab"]
+private = ["kernel", "slab", "heap spray", "uaf", "aaw", "type confusion", "heap overflow", "modprobe_path"]
+#############################################
